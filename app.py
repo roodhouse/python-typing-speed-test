@@ -6,6 +6,7 @@
 # calc score
 
 from tkinter import *  # noqa: F403
+from random_word import RandomWords, Wordnik
 
 window = Tk()  # noqa: F405
 window.title("Typing Speed Test")
@@ -85,7 +86,9 @@ def top_frame(container):
 
     return frame
 
-random_words = ['random', 'word', 'list']
+wordnik_service = Wordnik()
+
+random_words = wordnik_service.get_random_words()
 
 def middle_frame(container):
     frame = Frame(container)  # noqa: F405
@@ -93,7 +96,7 @@ def middle_frame(container):
 
     words_text = ' '.join(random_words)
 
-    text_box = Text(frame, width=84, height=20, wrap=WORD)  # noqa: F405
+    text_box = Text(frame, width=60, height=10, wrap=WORD, font=('Arial', 15), padx=20, pady=20)  # noqa: F405
     text_box.insert(END, words_text)  # noqa: F405
     text_box.config(state=DISABLED)  # noqa: F405
     text_box.pack(fill=X)  # noqa: F405
