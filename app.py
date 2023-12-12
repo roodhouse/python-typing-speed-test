@@ -48,6 +48,7 @@ directions = canvas.create_text(
         # WPM
         # timer
         # restart
+            # bind to restart program
     # middle frame
         # random words
     # bottom frame
@@ -62,6 +63,7 @@ def top_frame(container):
     frame.columnconfigure(4, weight=3)
     frame.columnconfigure(5, weight=1)
     frame.columnconfigure(6, weight=3)
+    frame.columnconfigure(7, weight=1)
     
     # CPM
     Label(frame, text='Corrected CPM: ').grid(column=0, row=0)
@@ -77,6 +79,9 @@ def top_frame(container):
     Label(frame, text='Time Left: ').grid(column=5, row=0)
     time_left = Entry(frame, width=10) # need timer here
     time_left.grid(column=6, row=0)
+
+    # Restart
+    Label(frame, text='Restart', foreground='white', font=('Arial', 12, 'underline'), cursor='man' ).grid(column=7, row=0)  # noqa: F405
 
     return frame
 
