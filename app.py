@@ -55,7 +55,7 @@ directions = canvas.create_text(
         # where user types
 
 def top_frame(container):
-    frame = Frame(container)
+    frame = Frame(container)  # noqa: F405
 
     frame.columnconfigure(0, weight=1)
     frame.columnconfigure(1, weight=3)
@@ -85,8 +85,23 @@ def top_frame(container):
 
     return frame
 
+random_words = ['random', 'word', 'list']
+
+def middle_frame(container):
+    frame = Frame(container)  # noqa: F405
+    frame.columnconfigure(0, weight=1)
+
+    words_text = ' '.join(random_words)
+
+    text_box = Text(frame, width=84, height=20, wrap=WORD)
+    text_box.insert(END, words_text)
+    text_box.config(state=DISABLED)
+    text_box.pack(fill=X)
+
+    return frame
+
 def main_frame(parent):
-    main_frame = Frame(parent)
+    main_frame = Frame(parent)  # noqa: F405
     # main_frame.pack()
     main_frame.grid(row=3, column=0)
 
@@ -97,6 +112,8 @@ def main_frame(parent):
 
     top = top_frame(main_frame)
     top.grid(row=0, column=0, sticky='ew')
+    middle = middle_frame(main_frame)
+    middle.grid(row=1, column=0)
 
 container_frame = Frame(window)
 container_frame.pack()
