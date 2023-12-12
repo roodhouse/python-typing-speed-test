@@ -66,18 +66,18 @@ def top_frame(container):
     frame.columnconfigure(7, weight=1)
     
     # CPM
-    Label(frame, text='Corrected CPM: ').grid(column=0, row=0)
-    corrected_cpm = Entry(frame, width=10)
+    Label(frame, text='Corrected CPM: ').grid(column=0, row=0)  # noqa: F405
+    corrected_cpm = Entry(frame, width=10)  # noqa: F405
     corrected_cpm.grid(column=1, row=0)
 
     # WPM
-    Label(frame, text='WPM: ').grid(column=3, row=0)
-    words_per_min = Entry(frame, width=10)
+    Label(frame, text='WPM: ').grid(column=3, row=0)  # noqa: F405
+    words_per_min = Entry(frame, width=10)  # noqa: F405
     words_per_min.grid(column=4, row=0)
 
     # Time left
-    Label(frame, text='Time Left: ').grid(column=5, row=0)
-    time_left = Entry(frame, width=10) # need timer here
+    Label(frame, text='Time Left: ').grid(column=5, row=0)  # noqa: F405
+    time_left = Entry(frame, width=10) # need timer here  # noqa: F405
     time_left.grid(column=6, row=0)
 
     # Restart
@@ -93,10 +93,10 @@ def middle_frame(container):
 
     words_text = ' '.join(random_words)
 
-    text_box = Text(frame, width=84, height=20, wrap=WORD)
-    text_box.insert(END, words_text)
-    text_box.config(state=DISABLED)
-    text_box.pack(fill=X)
+    text_box = Text(frame, width=84, height=20, wrap=WORD)  # noqa: F405
+    text_box.insert(END, words_text)  # noqa: F405
+    text_box.config(state=DISABLED)  # noqa: F405
+    text_box.pack(fill=X)  # noqa: F405
 
     return frame
 
@@ -115,7 +115,7 @@ def main_frame(parent):
     middle = middle_frame(main_frame)
     middle.grid(row=1, column=0)
 
-container_frame = Frame(window)
+container_frame = Frame(window)  # noqa: F405
 container_frame.pack()
 
 main_frame(container_frame)
