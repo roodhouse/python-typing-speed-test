@@ -99,31 +99,79 @@ def middle_frame(container):
     text_box.config(state=DISABLED)  # noqa: F405
     text_box.pack(fill=X)  # noqa: F405
 
-    return frame
-
-def bottom_frame(container):
-    frame = Frame(container)
-    frame.columnconfigure(0, weight=1)
-
-    text_box = Text(
-        frame, width=60, height=1, wrap=WORD, font=("Arial", 15), padx=20, pady=20,
-    )  # noqa: F405
+    bottom_frame = Text(frame, width=60, height=1, wrap=WORD, font=('Arial', 15), padx=20, pady=20)
 
     def on_entry(event):
-        if text_box.get("1.0", "end-1c") == "type the words here...":
-            text_box.delete("1.0", "end")
-
+        if bottom_frame.get("1.0", "end-1c") == "type the words here...":
+            bottom_frame.delete("1.0", "end")
+    
     def on_exit(event):
-        if text_box.get("1.0", "end-1c") == "":
-            text_box.insert("1.0", "type the words here...")
+        if bottom_frame.get("1.0", "end-1c") == "":
+            bottom_frame.insert("1.0", "type the words here...")
 
-    text_box.insert("1.0", "type the words here...")
-    text_box.pack(fill=X)  # noqa: F405
+    def on_key(event):
+        global random_words
+        # pop off first word in random word
+        # as letter is typed pop off first letter
+        # when space is hit, restart with next word?
+        print(event.char)
+        print(random_words[0][0])
+        if event.char != ' ':
+            if len(random_words) > 0:
+                current_word = random_words.pop(0)
+                print(f'removed word: {current_word}')
+                print(f'removed word type: {type(current_word)}')
+                current_word_list = list(current_word)
+                print(f'removed word list: {current_word_list}')
+                print(f'removed word type list: {type(current_word_list)}')
+                print(f'removed char: {current_word[0]}')
+                print(f'remaining words: {random_words}')
+                # compare event.char to the current_word_list[0], if same then pop off into another list and color letter yellow, if diff then pop off into another list and color letter red
+        else:
+            print('space hit')
+        # current_word = random_words[1:]
+        # print(current_word)
+        # if event.char == random_words[0][0]:
+        #     print('bingo')
 
-    text_box.bind("<FocusIn>", on_entry)
-    text_box.bind("<FocusOut>", on_exit)
+        # else:
+        #     print('bongo')
+
+
+    bottom_frame.insert("1.0", "type the words here...")
+    bottom_frame.pack(fill=X)
+
+    bottom_frame.bind("<FocusIn>", on_entry)
+    bottom_frame.bind("<FocusOut>", on_exit)
+    bottom_frame.bind("<Key>", on_key)
+
+    
 
     return frame
+
+# def bottom_frame(container):
+#     frame = Frame(container)
+#     frame.columnconfigure(0, weight=1)
+
+#     text_box = Text(
+#         frame, width=60, height=1, wrap=WORD, font=("Arial", 15), padx=20, pady=20,
+#     )  # noqa: F405
+
+#     def on_entry(event):
+#         if text_box.get("1.0", "end-1c") == "type the words here...":
+#             text_box.delete("1.0", "end")
+
+#     def on_exit(event):
+#         if text_box.get("1.0", "end-1c") == "":
+#             text_box.insert("1.0", "type the words here...")
+
+#     text_box.insert("1.0", "type the words here...")
+#     text_box.pack(fill=X)  # noqa: F405
+
+#     text_box.bind("<FocusIn>", on_entry)
+#     text_box.bind("<FocusOut>", on_exit)
+
+#     return frame
 
 
 def main_frame(parent):
@@ -134,14 +182,14 @@ def main_frame(parent):
     main_frame.columnconfigure(0, weight=1)
     main_frame.rowconfigure(0, weight=4)
     main_frame.rowconfigure(1, weight=3)
-    main_frame.rowconfigure(2, weight=2)
+    # main_frame.rowconfigure(2, weight=2)
 
     top = top_frame(main_frame)
     top.grid(row=0, column=0, sticky="ew")
     middle = middle_frame(main_frame)
     middle.grid(row=1, column=0)
-    bottom = bottom_frame(main_frame)
-    bottom.grid(row=2, column=0)
+    # bottom = bottom_frame(main_frame)
+    # bottom.grid(row=2, column=0)
 
 
 container_frame = Frame(window)  # noqa: F405
