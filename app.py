@@ -1,12 +1,7 @@
 # make it interactive
-    # connect the bottom frame to the words in the middle Frame
-    # highlight current word
     # indicate correct and incorrect characters pushed
-    # upon space move to next word in list
     # if close to the end then bring in and append a new list of words
 # calc score
-
-# highlights word on load, but does not change to next word upon space key
 
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder  # noqa: F403
@@ -86,8 +81,10 @@ def top_frame(container):
 
 wordnik_service = Wordnik()
 
-random_words = wordnik_service.get_random_words()
+# random_words = wordnik_service.get_random_words()
+random_words = ['john', 'jingle', 'jheimer']
 end_index = ''
+current_letters = []
 
 def middle_frame(container):
     frame = Frame(container)  # noqa: F405
@@ -116,12 +113,10 @@ def middle_frame(container):
 
     def remove_word():
         global end_index
-        current_word_list = []
         current_word = random_words.pop(0)
         for letter in current_word:
             current_word_list.append(letter)
         highlight_word = ''.join(current_word_list).lower()
-        # start_index = "1.0"
         start_index = ''
 
         if end_index != '':
@@ -131,74 +126,76 @@ def middle_frame(container):
             split_end = split_end + 2
             split_end = str(split_end)
             split_end = split_whole + '.' + split_end
-            print(split_end)
             start_index = split_end
-            # # convert end index to float, add .2 to it so the space is accounted for, convert back to string
-
-            print(start_index)
-            print(end_index)
         else:
             start_index = "1.0"
 
-        text_content = text_box.get(start_index, "end").lower()
-        convert_start_index = int(start_index.split('.')[0])
-        print(f'convert start index is: {convert_start_index}')
-        # here I need to make the start end index begin at the begin of next word
-        found_word = text_content.find(highlight_word, convert_start_index)
-        # found_word = text_content.find(highlight_word, 0)
-        if found_word != -1:
-            length = str(len(highlight_word))
-            found_start = str(convert_start_index)
-            end_index = found_start + '.' + length
-            text_box.tag_add('highlight', start_index, end_index)
-            text_box.tag_config('highlight', background='green')
+        if start_index == "1.0": 
+            text_content = text_box.get(start_index, "end").lower()
+            convert_start_index = 0
+            found_word = text_content.find(highlight_word, convert_start_index)
+            if found_word != -1:
+                length = str(len(highlight_word))
+                end_index = "1" + "." + length
+                text_box.tag_add('highlight', start_index, end_index)
+                text_box.tag_config('highlight', background='green')
+        else:
+            
+            split_start = start_index.split('.')
+            split_whole = split_start[0]
+            split_start = int(split_start[1])
+            split_start = split_start - 1
+            
+            convert_start_index = int(start_index.split('.')[1])
+            convert_start_index = convert_start_index - 1
+            convert_start_index = str(convert_start_index)
+            convert_start_index = split_whole + '.' + convert_start_index
 
-    remove_word()
+            text_content = text_box.get(convert_start_index, "end").lower()
+            highlight_word = ''.join(current_word_list)
+            
+            found_word = text_content.find(highlight_word, 0)
+            if found_word != -1:
+                length = len(highlight_word)
+                end_index = convert_start_index.split('.')
+                end_whole = end_index[0]
+                end_dec = int(end_index[1])
+                end_dec = end_dec + length
+                end_dec = str(end_dec)
+                end_index = end_whole + "." + end_dec
+                convert_start_index = str(convert_start_index)
+                text_box.tag_add('highlight', convert_start_index, end_index)
+                text_box.tag_config('highlight', background='green' )
+            else:
+                print('word not found')
     
-    def highlight_next_word():
-        global start_index
-        highlight_word = ''.join(current_word_list)
-        text_content = text_box.get("1.0", "end")
-        start_index = "1.0"
-        start_index_convert = int(start_index.split('.')[0])
+    remove_word()
 
-        start_index = text_content.find(highlight_word, start_index_convert)
-        if start_index != -1:
-            length = len(highlight_word)
-            end_index = start_index + length
-
-            start_line, start_column = text_content[:start_index].count('\n'), start_index - text_content.rfind('\n', 0, start_index)
-            end_line, end_column = text_content[:end_index].count('\n'), end_index - text_content.rfind('\n', 0, end_index)
-
-            start_index = f"{start_line + 1}.{start_column}"
-            end_index = f"{end_line + 1}.{end_column}"
-
-            text_box.tag_add("highlight", start_index, end_index)
-            text_box.tag_config("highlight", background="green")
-
-
+    def clear_highlight():
+        text_box.tag_remove('highlight', '1.0', 'end')
+    
     def on_key(event):
         global random_words
         global start_index
-        # pop off first word in random word
-        # as letter is typed pop off first letter
-        # when space is hit, restart with next word?
-
-        # convert list back to single word
-        single_word = "".join(current_word_list)
-    
-        current_letters = []
-
+        global current_letters
+        
         if event.char != ' ':
-                    # compare event.char to the current_word_list[0], if same then pop off into another list and color letter yellow, if diff then pop off into another list and color letter red
             if len(current_word_list) > 0:
                 if event.char == current_word_list[0]:
                     current_letters.append(current_word_list.pop(0))
+                    print(f' the current_letters are: {current_letters}')
+                    print(current_word_list)
                 else:
                     current_letters.append(current_word_list.pop(0))
+                    print(f' the current_letters are: {current_letters}')
         else:
-            # highlight_next_word()
-            remove_word()
+            if len(current_word_list) != 0:
+                print('not end of word')
+                return 'break'
+            else:
+                current_letters = []
+                clear_highlight()
+                remove_word()
 
     bottom_frame.insert("1.0", "type the words here...")
     bottom_frame.pack(fill=X)
@@ -213,21 +210,16 @@ def middle_frame(container):
 
 def main_frame(parent):
     main_frame = Frame(parent)  # noqa: F405
-    # main_frame.pack()
     main_frame.grid(row=3, column=0)
 
     main_frame.columnconfigure(0, weight=1)
     main_frame.rowconfigure(0, weight=4)
     main_frame.rowconfigure(1, weight=3)
-    # main_frame.rowconfigure(2, weight=2)
 
     top = top_frame(main_frame)
     top.grid(row=0, column=0, sticky="ew")
     middle = middle_frame(main_frame)
     middle.grid(row=1, column=0)
-    # bottom = bottom_frame(main_frame)
-    # bottom.grid(row=2, column=0)
-
 
 container_frame = Frame(window)  # noqa: F405
 container_frame.pack()
