@@ -87,7 +87,7 @@ def top_frame(container):
 wordnik_service = Wordnik()
 
 random_words = wordnik_service.get_random_words()
-
+end_index = ''
 
 def middle_frame(container):
     frame = Frame(container)  # noqa: F405
@@ -115,22 +115,37 @@ def middle_frame(container):
     current_word_list = []
 
     def remove_word():
-        print(current_word_list)
+        global end_index
+        current_word_list = []
         current_word = random_words.pop(0)
-        print(f'the current word is: {current_word}')
         for letter in current_word:
             current_word_list.append(letter)
-        print(f'the current word list is: {current_word_list}')
         highlight_word = ''.join(current_word_list).lower()
-        print(f'the highlight word is: {highlight_word}')
-        start_index = "1.0"
+        # start_index = "1.0"
+        start_index = ''
+
+        if end_index != '':
+            split_end = end_index.split('.')
+            split_whole = split_end[0]
+            split_end = int(split_end[1])
+            split_end = split_end + 2
+            split_end = str(split_end)
+            split_end = split_whole + '.' + split_end
+            print(split_end)
+            start_index = split_end
+            # # convert end index to float, add .2 to it so the space is accounted for, convert back to string
+
+            print(start_index)
+            print(end_index)
+        else:
+            start_index = "1.0"
+
         text_content = text_box.get(start_index, "end").lower()
-        print(f'the text content is: {text_content}')
         convert_start_index = int(start_index.split('.')[0])
-        print(f'start index is: {convert_start_index}')
-        # found_word = text_content.find(highlight_word, convert_start_index)
-        found_word = text_content.find(highlight_word, 0)
-        print(f'the found_word is {found_word}')
+        print(f'convert start index is: {convert_start_index}')
+        # here I need to make the start end index begin at the begin of next word
+        found_word = text_content.find(highlight_word, convert_start_index)
+        # found_word = text_content.find(highlight_word, 0)
         if found_word != -1:
             length = str(len(highlight_word))
             found_start = str(convert_start_index)
@@ -182,7 +197,8 @@ def middle_frame(container):
                 else:
                     current_letters.append(current_word_list.pop(0))
         else:
-            highlight_next_word()
+            # highlight_next_word()
+            remove_word()
 
     bottom_frame.insert("1.0", "type the words here...")
     bottom_frame.pack(fill=X)
