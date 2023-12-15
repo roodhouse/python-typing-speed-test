@@ -6,7 +6,10 @@
     # if close to the end then bring in and append a new list of words
 # calc score
 
-from tkinter import *  # noqa: F403
+# highlights word on load, but does not change to next word upon space key
+
+from tkinter import *
+from xml.etree.ElementTree import TreeBuilder  # noqa: F403
 from random_word import RandomWords, Wordnik
 
 window = Tk()  # noqa: F405
@@ -99,32 +102,98 @@ def middle_frame(container):
     text_box.config(state=DISABLED)  # noqa: F405
     text_box.pack(fill=X)  # noqa: F405
 
-    return frame
-
-def bottom_frame(container):
-    frame = Frame(container)
-    frame.columnconfigure(0, weight=1)
-
-    text_box = Text(
-        frame, width=60, height=1, wrap=WORD, font=("Arial", 15), padx=20, pady=20,
-    )  # noqa: F405
+    bottom_frame = Text(frame, width=60, height=1, wrap=WORD, font=('Arial', 15), padx=20, pady=20)
 
     def on_entry(event):
-        if text_box.get("1.0", "end-1c") == "type the words here...":
-            text_box.delete("1.0", "end")
-
+        if bottom_frame.get("1.0", "end-1c") == "type the words here...":
+            bottom_frame.delete("1.0", "end")
+    
     def on_exit(event):
-        if text_box.get("1.0", "end-1c") == "":
-            text_box.insert("1.0", "type the words here...")
+        if bottom_frame.get("1.0", "end-1c") == "":
+            bottom_frame.insert("1.0", "type the words here...")
+    
+    current_word_list = []
 
-    text_box.insert("1.0", "type the words here...")
-    text_box.pack(fill=X)  # noqa: F405
+    def remove_word():
+        print(current_word_list)
+        current_word = random_words.pop(0)
+        print(f'the current word is: {current_word}')
+        for letter in current_word:
+            current_word_list.append(letter)
+        print(f'the current word list is: {current_word_list}')
+        highlight_word = ''.join(current_word_list).lower()
+        print(f'the highlight word is: {highlight_word}')
+        start_index = "1.0"
+        text_content = text_box.get(start_index, "end").lower()
+        print(f'the text content is: {text_content}')
+        convert_start_index = int(start_index.split('.')[0])
+        print(f'start index is: {convert_start_index}')
+        # found_word = text_content.find(highlight_word, convert_start_index)
+        found_word = text_content.find(highlight_word, 0)
+        print(f'the found_word is {found_word}')
+        if found_word != -1:
+            length = str(len(highlight_word))
+            found_start = str(convert_start_index)
+            end_index = found_start + '.' + length
+            text_box.tag_add('highlight', start_index, end_index)
+            text_box.tag_config('highlight', background='green')
 
-    text_box.bind("<FocusIn>", on_entry)
-    text_box.bind("<FocusOut>", on_exit)
+    remove_word()
+    
+    def highlight_next_word():
+        global start_index
+        highlight_word = ''.join(current_word_list)
+        text_content = text_box.get("1.0", "end")
+        start_index = "1.0"
+        start_index_convert = int(start_index.split('.')[0])
+
+        start_index = text_content.find(highlight_word, start_index_convert)
+        if start_index != -1:
+            length = len(highlight_word)
+            end_index = start_index + length
+
+            start_line, start_column = text_content[:start_index].count('\n'), start_index - text_content.rfind('\n', 0, start_index)
+            end_line, end_column = text_content[:end_index].count('\n'), end_index - text_content.rfind('\n', 0, end_index)
+
+            start_index = f"{start_line + 1}.{start_column}"
+            end_index = f"{end_line + 1}.{end_column}"
+
+            text_box.tag_add("highlight", start_index, end_index)
+            text_box.tag_config("highlight", background="green")
+
+
+    def on_key(event):
+        global random_words
+        global start_index
+        # pop off first word in random word
+        # as letter is typed pop off first letter
+        # when space is hit, restart with next word?
+
+        # convert list back to single word
+        single_word = "".join(current_word_list)
+    
+        current_letters = []
+
+        if event.char != ' ':
+                    # compare event.char to the current_word_list[0], if same then pop off into another list and color letter yellow, if diff then pop off into another list and color letter red
+            if len(current_word_list) > 0:
+                if event.char == current_word_list[0]:
+                    current_letters.append(current_word_list.pop(0))
+                else:
+                    current_letters.append(current_word_list.pop(0))
+        else:
+            highlight_next_word()
+
+    bottom_frame.insert("1.0", "type the words here...")
+    bottom_frame.pack(fill=X)
+
+    bottom_frame.bind("<FocusIn>", on_entry)
+    bottom_frame.bind("<FocusOut>", on_exit)
+    bottom_frame.bind("<Key>", on_key)
+
+    
 
     return frame
-
 
 def main_frame(parent):
     main_frame = Frame(parent)  # noqa: F405
@@ -134,14 +203,14 @@ def main_frame(parent):
     main_frame.columnconfigure(0, weight=1)
     main_frame.rowconfigure(0, weight=4)
     main_frame.rowconfigure(1, weight=3)
-    main_frame.rowconfigure(2, weight=2)
+    # main_frame.rowconfigure(2, weight=2)
 
     top = top_frame(main_frame)
     top.grid(row=0, column=0, sticky="ew")
     middle = middle_frame(main_frame)
     middle.grid(row=1, column=0)
-    bottom = bottom_frame(main_frame)
-    bottom.grid(row=2, column=0)
+    # bottom = bottom_frame(main_frame)
+    # bottom.grid(row=2, column=0)
 
 
 container_frame = Frame(window)  # noqa: F405
