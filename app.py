@@ -84,7 +84,9 @@ wordnik_service = Wordnik()
 # random_words = wordnik_service.get_random_words()
 random_words = ['john', 'jingle', 'jheimer']
 end_index = ''
+start_index = ''
 current_letters = []
+count = 0
 
 def middle_frame(container):
     frame = Frame(container)  # noqa: F405
@@ -113,11 +115,12 @@ def middle_frame(container):
 
     def remove_word():
         global end_index
+        global start_index
         current_word = random_words.pop(0)
         for letter in current_word:
             current_word_list.append(letter)
         highlight_word = ''.join(current_word_list).lower()
-        start_index = ''
+        # start_index = ''
 
         if end_index != '':
             split_end = end_index.split('.')
@@ -178,22 +181,48 @@ def middle_frame(container):
         global random_words
         global start_index
         global current_letters
+        global count
         
         if event.char != ' ':
             if len(current_word_list) > 0:
-                if event.char == current_word_list[0]:
-                    current_letters.append(current_word_list.pop(0))
-                    print(f' the current_letters are: {current_letters}')
-                    print(current_word_list)
+                count += 1
+                if event.char == current_word_list[0]: 
+                    # color the character yellow
+                    print(start_index)
+                    char_index = start_index.split('.')
+                    char_whole = char_index[0]
+                    char_index = int(char_index[1])
+                    char_index = char_index + 1
+                    print(char_index)
+                    char_index = count - char_index
+                    char_index = char_whole + '.' + str(char_index)
+                    text_content = text_box.get(start_index, end_index)
+                    print(f'text_content is {text_content}')
+                    text_content_single = text_box.get(char_index)
+                    print(f'text_content_single is {text_content_single}')
+                    
+                    # check errors from here!
+                    
+                    found_char = text_content.find(current_word_list[0], char_index)
+                    # found_char = str(found_char)
+                    # char_index = str(char_index)
+                    if found_char != -1:
+                        found_char_position = char_whole + '.' + str(found_char)
+                        # next_char_position = char_whole + '.' + str(found_char + 1)
+                        text_box.tag_add('font', found_char_position)
+                        text_box.tag_config('highlight', foreground='yellow' )
+                        current_letters.append(current_word_list.pop(0))
                 else:
                     current_letters.append(current_word_list.pop(0))
-                    print(f' the current_letters are: {current_letters}')
+                    # color the character red
+                    
         else:
             if len(current_word_list) != 0:
                 print('not end of word')
                 return 'break'
             else:
                 current_letters = []
+                count = 0
                 clear_highlight()
                 remove_word()
 
