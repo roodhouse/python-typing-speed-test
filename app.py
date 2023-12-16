@@ -3,6 +3,7 @@
     # if close to the end then bring in and append a new list of words
 # calc score
 
+import random
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder  # noqa: F403
 from random_word import RandomWords, Wordnik
@@ -87,6 +88,7 @@ end_index = ''
 start_index = ''
 current_letters = []
 count = 0
+word_count = 0
 
 def middle_frame(container):
     frame = Frame(container)  # noqa: F405
@@ -116,7 +118,11 @@ def middle_frame(container):
     def remove_word():
         global end_index
         global start_index
+        print(f'from remove word before pop random words is: {random_words}')
+        print(current_letters)
         current_word = random_words.pop(0)
+        print(f'from remove word after pop word list is: {random_words}')
+        print(f'current word from remove word is {current_word}')
         for letter in current_word:
             current_word_list.append(letter)
         highlight_word = ''.join(current_word_list).lower()
@@ -143,18 +149,21 @@ def middle_frame(container):
                 text_box.tag_add('highlight', start_index, end_index)
                 text_box.tag_config('highlight', background='green')
         else:
-            
+            print(f'start index from else {start_index}')
             split_start = start_index.split('.')
             split_whole = split_start[0]
             split_start = int(split_start[1])
             split_start = split_start - 1
+            print(f'spilt start is {split_start}')
             
             convert_start_index = int(start_index.split('.')[1])
             convert_start_index = convert_start_index - 1
             convert_start_index = str(convert_start_index)
             convert_start_index = split_whole + '.' + convert_start_index
+            print(convert_start_index)
 
             text_content = text_box.get(convert_start_index, "end").lower()
+            print(text_content)
             highlight_word = ''.join(current_word_list)
             
             found_word = text_content.find(highlight_word, 0)
@@ -182,55 +191,68 @@ def middle_frame(container):
         global start_index
         global current_letters
         global count
+        global word_count
         
         if event.char != ' ':
-            print('char other than space entered')
             if len(current_word_list) > 0:
                 count += 1
+                print(f'word count is {word_count}')
                 if event.char == current_word_list[0]: 
-                    # print('test')
-                    # current_letters.append(current_word_list.pop(0))
-                    # color the character yellow
                     char_index = start_index.split('.')
                     char_whole = char_index[0]
                     char_index = int(char_index[1])
                     char_index = char_index + 1
                     char_index = count - char_index
                     char_index = char_whole + '.' + str(char_index)
-                    text_content = text_box.get(start_index, end_index)
-                    print(f'text_content is {text_content}')
-                    text_content_single = text_box.get(char_index)
-                    print(f'text_content_single is {text_content_single}')
+                    if word_count == 0:
+                        text_content = text_box.get(start_index, end_index)
+                        print(f'start index is {start_index}')
+                        print(f'current text content is {text_content}')
+                        text_content_single = text_box.get(char_index)
                     
-                    char_convert = char_index.split('.')[1]
-                    char_convert = int(char_convert)
-                    found_char = text_content.find(current_word_list[0], char_convert)
-                    print(found_char)
+                        char_convert = char_index.split('.')[1]
+                        char_convert = int(char_convert)
+                        found_char = text_content.find(current_word_list[0], char_convert)
+                    else:
+                        text_content = text_box.get(start_index, end_index)
+                        print(f' test start index is {start_index}')
+                        print(f' test current text content is {text_content}')
+                        print(f'the start index is fail {start_index}')
+                        start_index_convert = start_index.split('.')
+                        start_index_convert_dec = int(start_index_convert[1]) - 1
+                        start_index_convert_dec = str(start_index_convert_dec)
+                        start_index = start_index_convert[0] + '.' + start_index_convert_dec
+                        print(f'the new start index is {start_index}')
+                        text_content = text_box.get(start_index, end_index)
+                        print(f'start index is {start_index}')
+                        print(f'current text content is {text_content}')
+                        text_content_single = text_box.get(char_index)
+                    
+                        char_convert = char_index.split('.')[1]
+                        char_convert = int(char_convert)
+                        found_char = text_content.find(current_word_list[0], char_convert)
+
   
                     if found_char != -1:
                         found_char_position = char_whole + '.' + str(found_char)
-                        print(f'found char postion is: {found_char_position}')
                         next_char_position = found_char_position + '+1c'
-                        print(f'end pos is {next_char_position}')
                         text_box.tag_add('font', found_char_position, next_char_position)
                         text_box.tag_config('font', foreground='yellow' )
                         current_letters.append(current_word_list.pop(0))
                 else:
                     # color the char character red
                     char_index = 1
+                    print(f'count is {count}')
                     char_index = count - char_index
+                    print(char_index)
                     full_char_index = "1." + str(char_index)
-                    print(f'wrong letter entered: {full_char_index}')
                     text_content = text_box.get(start_index, end_index)
-                    print(f'text content is {text_content}')
-                    print(f'text content is {text_content[0]}')
+                    print(f'current text content (from wrong char) is {text_content}')
                     found_char = text_content.find(text_content[char_index], char_index)
-                    print(f'found char is {found_char}')
                     if found_char != -1:
                         next_char_position = full_char_index + '+1c'
                         text_box.tag_add('wrong_font', full_char_index, next_char_position)
                         text_box.tag_config('wrong_font', foreground='red')
-                        print(f'correct letter was {current_word_list[0]}')
                         current_letters.append(current_word_list.pop(0))
                     
         else:
@@ -238,8 +260,12 @@ def middle_frame(container):
                 print('not end of word')
                 return 'break'
             else:
+                count += 1
+                print(f'from legal space {random_words}')
+                print(f'from legal space start index is {start_index}')
                 current_letters = []
                 count = 0
+                word_count += 1
                 clear_highlight()
                 remove_word()
 
