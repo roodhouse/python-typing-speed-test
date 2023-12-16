@@ -188,12 +188,10 @@ def middle_frame(container):
                 count += 1
                 if event.char == current_word_list[0]: 
                     # color the character yellow
-                    print(start_index)
                     char_index = start_index.split('.')
                     char_whole = char_index[0]
                     char_index = int(char_index[1])
                     char_index = char_index + 1
-                    print(char_index)
                     char_index = count - char_index
                     char_index = char_whole + '.' + str(char_index)
                     text_content = text_box.get(start_index, end_index)
@@ -201,16 +199,18 @@ def middle_frame(container):
                     text_content_single = text_box.get(char_index)
                     print(f'text_content_single is {text_content_single}')
                     
-                    # check errors from here!
-                    
-                    found_char = text_content.find(current_word_list[0], char_index)
-                    # found_char = str(found_char)
-                    # char_index = str(char_index)
+                    char_convert = char_index.split('.')[1]
+                    char_convert = int(char_convert)
+                    found_char = text_content.find(current_word_list[0], char_convert)
+                    print(found_char)
+  
                     if found_char != -1:
                         found_char_position = char_whole + '.' + str(found_char)
-                        # next_char_position = char_whole + '.' + str(found_char + 1)
-                        text_box.tag_add('font', found_char_position)
-                        text_box.tag_config('highlight', foreground='yellow' )
+                        print(f'found char postion is: {found_char_position}')
+                        next_char_position = found_char_position + '+1c'
+                        print(f'end pos is {next_char_position}')
+                        text_box.tag_add('font', found_char_position, next_char_position)
+                        text_box.tag_config('font', foreground='yellow' )
                         current_letters.append(current_word_list.pop(0))
                 else:
                     current_letters.append(current_word_list.pop(0))
