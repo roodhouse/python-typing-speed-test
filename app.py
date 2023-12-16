@@ -184,9 +184,12 @@ def middle_frame(container):
         global count
         
         if event.char != ' ':
+            print('char other than space entered')
             if len(current_word_list) > 0:
                 count += 1
                 if event.char == current_word_list[0]: 
+                    # print('test')
+                    # current_letters.append(current_word_list.pop(0))
                     # color the character yellow
                     char_index = start_index.split('.')
                     char_whole = char_index[0]
@@ -213,8 +216,22 @@ def middle_frame(container):
                         text_box.tag_config('font', foreground='yellow' )
                         current_letters.append(current_word_list.pop(0))
                 else:
-                    current_letters.append(current_word_list.pop(0))
-                    # color the character red
+                    # color the char character red
+                    char_index = 1
+                    char_index = count - char_index
+                    full_char_index = "1." + str(char_index)
+                    print(f'wrong letter entered: {full_char_index}')
+                    text_content = text_box.get(start_index, end_index)
+                    print(f'text content is {text_content}')
+                    print(f'text content is {text_content[0]}')
+                    found_char = text_content.find(text_content[char_index], char_index)
+                    print(f'found char is {found_char}')
+                    if found_char != -1:
+                        next_char_position = full_char_index + '+1c'
+                        text_box.tag_add('wrong_font', full_char_index, next_char_position)
+                        text_box.tag_config('wrong_font', foreground='red')
+                        print(f'correct letter was {current_word_list[0]}')
+                        current_letters.append(current_word_list.pop(0))
                     
         else:
             if len(current_word_list) != 0:
