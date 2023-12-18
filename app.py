@@ -1,7 +1,6 @@
 # make it interactive
     # if close to the end then bring in and append a new list of words
 # calc score
-    # sould I consolidate frames again?
 
 import random
 from tkinter import *
@@ -45,49 +44,6 @@ directions = canvas.create_text(
 
 CPM = 0
 
-def top_frame(container):
-    frame = Frame(container)  # noqa: F405
-
-    frame.columnconfigure(0, weight=1)
-    frame.columnconfigure(1, weight=3)
-    frame.columnconfigure(3, weight=1)
-    frame.columnconfigure(4, weight=3)
-    frame.columnconfigure(5, weight=1)
-    frame.columnconfigure(6, weight=3)
-    frame.columnconfigure(7, weight=1)
-
-    # CPM
-    corrected_cpm = Label(frame, text=f"Corrected CPM: {CPM}")  # noqa: F405
-    corrected_cpm.grid(column=0, row=0)
-
-    # WPM
-    words_per_min = Label(frame, text='WPM: ')  # noqa: F405
-    words_per_min.grid(column=3, row=0)
-
-    # countdown timer
-    def countdown(seconds):
-       if seconds > 0:
-            time_left.config(text=f'Time Left: {seconds}')
-            window.after(1000, countdown, seconds - 1)
-       else:
-           time_left.config(text=f'Time\'s up!')
-
-    time_left = Label(frame, text="Time Left: ")  # noqa: F405
-    time_left.grid(column=5, row=0)
-
-    # Restart
-    Label(
-        frame,
-        text="Restart",
-        foreground="white",
-        font=("Arial", 12, "underline"),
-        cursor="man",
-    ).grid(column=7, row=0)  # noqa: F405
-
-    countdown(60)
-
-    return frame
-
 wordnik_service = Wordnik()
 
 # random_words = wordnik_service.get_random_words()
@@ -101,6 +57,49 @@ old_start_index = 0
 original_start_index = 0
 
 def middle_frame(container):
+    global CPM
+    #top frame start here 
+    top_frame = Frame(container)  # noqa: F405
+
+    top_frame.columnconfigure(0, weight=1)
+    top_frame.columnconfigure(1, weight=3)
+    top_frame.columnconfigure(3, weight=1)
+    top_frame.columnconfigure(4, weight=3)
+    top_frame.columnconfigure(5, weight=1)
+    top_frame.columnconfigure(6, weight=3)
+    top_frame.columnconfigure(7, weight=1)
+
+    # CPM
+    corrected_cpm = Label(top_frame, text=f"Corrected CPM: {CPM}")  # noqa: F405
+    corrected_cpm.grid(column=0, row=0)
+
+    # WPM
+    words_per_min = Label(top_frame, text='WPM: ')  # noqa: F405
+    words_per_min.grid(column=3, row=0)
+
+    # countdown timer
+    def countdown(seconds):
+       if seconds > 0:
+            time_left.config(text=f'Time Left: {seconds}')
+            window.after(1000, countdown, seconds - 1)
+       else:
+           time_left.config(text=f'Time\'s up!')
+
+    time_left = Label(top_frame, text="Time Left: ")  # noqa: F405
+    time_left.grid(column=5, row=0)
+
+    # Restart
+    Label(  # noqa: F405
+        top_frame,
+        text="Restart",
+        foreground="white",
+        font=("Arial", 12, "underline"),
+        cursor="man",
+    ).grid(column=7, row=0)  # noqa: F405
+
+    countdown(60)
+
+    # middle frame start here 
     frame = Frame(container)  # noqa: F405
     frame.columnconfigure(0, weight=1)
 
@@ -195,6 +194,10 @@ def middle_frame(container):
         global word_count
         global old_start_index
         global original_start_index
+        global CPM
+
+        CPM += 1
+        corrected_cpm.config(text=f"Corrected CPM: {CPM}")
         
         if event.char != ' ':
             if len(current_word_list) > 0:
@@ -299,8 +302,10 @@ def middle_frame(container):
                 clear_highlight()
                 remove_word()
 
+    top_frame.grid(row=0, column=0, sticky="ew")
     bottom_frame.insert("1.0", "type the words here...")
     bottom_frame.pack(fill=X)
+
 
     bottom_frame.bind("<FocusIn>", on_entry)
     bottom_frame.bind("<FocusOut>", on_exit)
@@ -316,10 +321,11 @@ def main_frame(parent):
     main_frame.rowconfigure(0, weight=4)
     main_frame.rowconfigure(1, weight=3)
 
-    top = top_frame(main_frame)
-    top.grid(row=0, column=0, sticky="ew")
+    # top = top_frame(main_frame)
+    # top.grid(row=0, column=0, sticky="ew")
     middle = middle_frame(main_frame)
-    middle.grid(row=1, column=0)
+    # middle.grid(row=1, column=0)
+    middle.grid(row=1, column=0, sticky="ew")
 
 container_frame = Frame(window)  # noqa: F405
 container_frame.pack()
