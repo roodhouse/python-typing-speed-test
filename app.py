@@ -1,12 +1,14 @@
 # make it interactive
     # indicate correct and incorrect characters pushed
     # if close to the end then bring in and append a new list of words
+# timer
 # calc score
 
 import random
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder  # noqa: F403
 from random_word import RandomWords, Wordnik
+import time
 
 window = Tk()  # noqa: F405
 window.title("Typing Speed Test")
@@ -63,10 +65,16 @@ def top_frame(container):
     words_per_min = Entry(frame, width=10)  # noqa: F405
     words_per_min.grid(column=4, row=0)
 
-    # Time left
-    Label(frame, text="Time Left: ").grid(column=5, row=0)  # noqa: F405
-    time_left = Entry(frame, width=10)  # need timer here  # noqa: F405
-    time_left.grid(column=6, row=0)
+    # countdown timer
+    def countdown(seconds):
+       if seconds > 0:
+            time_left.config(text=f'Time Left: {seconds}')
+            window.after(1000, countdown, seconds - 1)
+       else:
+           time_left.config(text=f'Time\'s up!')
+
+    time_left = Label(frame, text="Time Left: ")  # noqa: F405
+    time_left.grid(column=5, row=0)
 
     # Restart
     Label(
@@ -77,8 +85,9 @@ def top_frame(container):
         cursor="man",
     ).grid(column=7, row=0)  # noqa: F405
 
-    return frame
+    countdown(60)
 
+    return frame
 
 wordnik_service = Wordnik()
 
