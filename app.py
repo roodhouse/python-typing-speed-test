@@ -198,6 +198,7 @@ def middle_frame(container):
                     char_index = char_index + 1
                     char_index = count - char_index
                     char_index = char_whole + '.' + str(char_index)
+
                     if word_count == 0:
                         text_content = text_box.get(start_index, end_index)
                         char_convert = char_index.split('.')[1]
@@ -219,9 +220,7 @@ def middle_frame(container):
                             original_start_index = start_index_convert_dec
                             old_start_index += 1
                         else:
-                            print('here')
                             start_index_convert_dec = int(old_start_index) + original_start_index
-                            print(start_index_convert_dec)
                             old_start_index += 1
                        
                         start_index_convert_dec_string = str(start_index_convert_dec)
@@ -241,17 +240,44 @@ def middle_frame(container):
                             print('char not found')
                 else:
                     # color the char character red
-                    char_index = 1
-                    char_index = count - char_index
-                    full_char_index = "1." + str(char_index)
-                    text_content = text_box.get(start_index, end_index)
-                    found_char = text_content.find(text_content[char_index], char_index)
-                    if found_char != -1:
-                        next_char_position = full_char_index + '+1c'
-                        text_box.tag_add('wrong_font', full_char_index, next_char_position)
-                        text_box.tag_config('wrong_font', foreground='red')
-                        current_letters.append(current_word_list.pop(0))
-                    
+                    if word_count == 0:
+                        char_index = 1
+                        char_index = count - char_index
+                        full_char_index = "1." + str(char_index)
+                        text_content = text_box.get(start_index, end_index)
+                        found_char = text_content.find(text_content[char_index], char_index)
+                        if found_char != -1:
+                            next_char_position = full_char_index + '+1c'
+                            text_box.tag_add('wrong_font', full_char_index, next_char_position)
+                            text_box.tag_config('wrong_font', foreground='red')
+                            current_letters.append(current_word_list.pop(0))
+                        else:
+                            print('char not found')
+                    else:
+                        # the word count is greater than 0
+                        start_index_convert = start_index.split('.')
+                        if old_start_index == 0:
+                            start_index_convert_dec = int(start_index_convert[1]) - 1
+                            original_start_index = start_index_convert_dec
+                            old_start_index += 1
+                        else:
+                            start_index_convert_dec = int(old_start_index) + original_start_index
+                            old_start_index += 1
+
+                        start_index_convert_dec_string = str(start_index_convert_dec)
+                        start_index = start_index_convert[0] + '.' + start_index_convert_dec_string
+                        text_content = text_box.get(start_index, end_index)
+                        found_char = text_content.find(current_word_list[0], 0)
+
+                        if found_char != -1:
+                            found_char_position = start_index_convert[0] + '.' + start_index_convert_dec_string
+                            next_char_position = found_char_position + '+1c'
+                            text_box.tag_add('wrong_font', start_index, next_char_position)
+                            text_box.tag_config('wrong_font', foreground='red' )
+                            current_letters.append(current_word_list.pop(0))
+                        else:
+                            print('char not found')
+
         else:
             if len(current_word_list) != 0:
                 print('not end of word')
