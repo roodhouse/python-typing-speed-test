@@ -198,7 +198,6 @@ def middle_frame(container):
                     char_index = char_index + 1
                     char_index = count - char_index
                     char_index = char_whole + '.' + str(char_index)
-                    # print(f'char index at start: {char_index}')
                     if word_count == 0:
                         text_content = text_box.get(start_index, end_index)
                         char_convert = char_index.split('.')[1]
@@ -215,20 +214,12 @@ def middle_frame(container):
                             print('char not found')
                     else:
                         start_index_convert = start_index.split('.')
-                        print(f'start convert is: {start_index_convert[1]}')
                         if old_start_index == 0:
-                        # if start something is less than a number then subtract the start index conver by 1, else do otherwise
-                            print(f'old start index is {old_start_index}')
                             start_index_convert_dec = int(start_index_convert[1]) - 1
                             original_start_index = start_index_convert_dec
                             old_start_index += 1
                         else:
                             print('here')
-                            # add start index or start_index_convert to old_start_index
-                            print(f'the start index is {start_index} and the convert is {start_index_convert[1]}')
-                            print(f'old start index is {old_start_index}')
-                            # start_index_convert_dec = int(start_index_convert[1])
-                            # start_index_convert_dec = int(old_start_index) + int(start_index_convert[1])
                             start_index_convert_dec = int(old_start_index) + original_start_index
                             print(start_index_convert_dec)
                             old_start_index += 1
@@ -236,34 +227,18 @@ def middle_frame(container):
                         start_index_convert_dec_string = str(start_index_convert_dec)
                         start_index = start_index_convert[0] + '.' + start_index_convert_dec_string
                         text_content = text_box.get(start_index, end_index)
-                        
                         char_convert = char_index.split('.')[1]
                         char_convert = int(char_convert)
-                        
-                        # found_char = text_content.find(current_word_list[0], start_index_convert_dec)
                         found_char = text_content.find(current_word_list[0], 0)
-                        found_character = text_content[found_char]
   
                         if found_char != -1:
-                            print(f'start index convet dec is {start_index_convert_dec}')
-                            print(f'char convert is {char_convert}')
-                            print(f'start index is {start_index}')
-                            # found_char_position = char_whole + '.' + str(found_char)
                             found_char_position = char_whole + '.' + start_index_convert_dec_string
-                            # here !!!
-                            print(f'found_char_position is {found_char_position}')
                             next_char_position = found_char_position + '+1c'
-                            print(f'next char pos is {next_char_position}')
-                            # text_box.tag_add('font', found_char_position, next_char_position)
                             text_box.tag_add('font', start_index, next_char_position)
                             text_box.tag_config('font', foreground='yellow' )
                             current_letters.append(current_word_list.pop(0))
                         else:
                             print('char not found')
-                            print(f'the actual cahr is {found_character}')
-                            print(f'found char is {found_char} and should be 0 or true')
-                            print(text_content)
-                            print(current_word_list[0])
                 else:
                     # color the char character red
                     char_index = 1
