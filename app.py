@@ -1,8 +1,7 @@
 # make it interactive
-    # indicate correct and incorrect characters pushed
     # if close to the end then bring in and append a new list of words
-# timer
 # calc score
+    # sould I consolidate frames again?
 
 import random
 from tkinter import *
@@ -44,6 +43,8 @@ directions = canvas.create_text(
     fill="white",
 )
 
+CPM = 0
+
 def top_frame(container):
     frame = Frame(container)  # noqa: F405
 
@@ -56,14 +57,12 @@ def top_frame(container):
     frame.columnconfigure(7, weight=1)
 
     # CPM
-    Label(frame, text="Corrected CPM: ").grid(column=0, row=0)  # noqa: F405
-    corrected_cpm = Entry(frame, width=10)  # noqa: F405
-    corrected_cpm.grid(column=1, row=0)
+    corrected_cpm = Label(frame, text=f"Corrected CPM: {CPM}")  # noqa: F405
+    corrected_cpm.grid(column=0, row=0)
 
     # WPM
-    Label(frame, text="WPM: ").grid(column=3, row=0)  # noqa: F405
-    words_per_min = Entry(frame, width=10)  # noqa: F405
-    words_per_min.grid(column=4, row=0)
+    words_per_min = Label(frame, text='WPM: ')  # noqa: F405
+    words_per_min.grid(column=3, row=0)
 
     # countdown timer
     def countdown(seconds):
@@ -306,8 +305,6 @@ def middle_frame(container):
     bottom_frame.bind("<FocusIn>", on_entry)
     bottom_frame.bind("<FocusOut>", on_exit)
     bottom_frame.bind("<Key>", on_key)
-
-    
 
     return frame
 
