@@ -1,6 +1,5 @@
-# make it interactive
-    # if close to the end then bring in and append a new list of words
-# calc score
+# see if can reduce the words to words between 5 and 10 characters 
+# make text bigger
 
 import glob
 import random
@@ -47,8 +46,8 @@ CPM = 0
 
 wordnik_service = Wordnik()
 
-# random_words = wordnik_service.get_random_words()
-random_words = ['john', 'jingle', 'jheimer']
+random_words = wordnik_service.get_random_words()
+# random_words = ['john', 'jingle', 'jheimer']
 end_index = ''
 start_index = ''
 current_letters = []
@@ -57,9 +56,11 @@ word_count = 0
 old_start_index = 0
 original_start_index = 0
 errors = 0
+start = True
 
 def middle_frame(container):
     global CPM
+    global start
     #top frame start here 
     top_frame = Frame(container)  # noqa: F405
 
@@ -87,7 +88,7 @@ def middle_frame(container):
        else:
            time_left.config(text=f'Time\'s up!')
 
-    time_left = Label(top_frame, text="Time Left: ")  # noqa: F405
+    time_left = Label(top_frame, text="Time Left: 60")  # noqa: F405
     time_left.grid(column=5, row=0)
 
     # Restart
@@ -99,7 +100,7 @@ def middle_frame(container):
         cursor="man",
     ).grid(column=7, row=0)  # noqa: F405
 
-    countdown(60)
+    # countdown(60)
 
     # middle frame start here 
     frame = Frame(container)  # noqa: F405
@@ -188,6 +189,9 @@ def middle_frame(container):
     def clear_highlight():
         text_box.tag_remove('highlight', '1.0', 'end')
     
+    def disable_backspace(event):
+        return 'break'
+    
     def on_key(event):
         global random_words
         global start_index
@@ -198,6 +202,11 @@ def middle_frame(container):
         global original_start_index
         global CPM
         global errors
+        global start
+
+        if start:
+                countdown(60)
+                start = False
 
         if event.char != ' ':
             CPM += 1
@@ -253,7 +262,6 @@ def middle_frame(container):
                             print('char not found')
                 else:
                     errors += 1
-                    print(errors)
                     # color the char character red
                     if word_count == 0:
                         char_index = 1
@@ -299,9 +307,12 @@ def middle_frame(container):
                 cpm_score = accuracy * 100.0
                 corrected_cpm.config(text=f"Accuracy: {round(cpm_score)}%")
             else:
-                corrected_cpm.config(text=f"Accuracy: 100%")
+                corrected_cpm.config(text="Accuracy: 100%")
 
-        else:
+            WPM = (CPM/5)/1
+            words_per_min.config(text=f'WPM: {WPM}')
+
+        else:            
             if len(current_word_list) != 0:
                 print('not end of word')
                 return 'break'
@@ -318,9 +329,9 @@ def middle_frame(container):
     bottom_frame.insert("1.0", "type the words here...")
     bottom_frame.pack(fill=X)
 
-
     bottom_frame.bind("<FocusIn>", on_entry)
     bottom_frame.bind("<FocusOut>", on_exit)
+    bottom_frame.bind("<BackSpace>", disable_backspace)
     bottom_frame.bind("<Key>", on_key)
 
     return frame
@@ -333,10 +344,7 @@ def main_frame(parent):
     main_frame.rowconfigure(0, weight=4)
     main_frame.rowconfigure(1, weight=3)
 
-    # top = top_frame(main_frame)
-    # top.grid(row=0, column=0, sticky="ew")
     middle = middle_frame(main_frame)
-    # middle.grid(row=1, column=0)
     middle.grid(row=1, column=0, sticky="ew")
 
 container_frame = Frame(window)  # noqa: F405
