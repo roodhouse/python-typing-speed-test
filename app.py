@@ -1,9 +1,9 @@
 # restart button
 # frame to display final score
-# remove caps and odd characters from word list
 
 from tkinter import *  # noqa: F403
 from random_word import RandomWords, Wordnik
+import string
 
 window = Tk()  # noqa: F405
 window.title("Typing Speed Test")
@@ -46,6 +46,12 @@ CPM = 0
 wordnik_service = Wordnik()
 
 random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
+words_lower = [word.lower() for word in random_words]
+word_translate = str.maketrans("", "", string.punctuation)
+words_clean = [word.translate(word_translate) for word in words_lower]
+random_words = words_clean
+
+
 end_index = ''
 start_index = ''
 current_letters = []
