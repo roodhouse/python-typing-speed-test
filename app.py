@@ -2,6 +2,7 @@
     # if close to the end then bring in and append a new list of words
 # calc score
 
+import glob
 import random
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder  # noqa: F403
@@ -55,6 +56,7 @@ count = 0
 word_count = 0
 old_start_index = 0
 original_start_index = 0
+errors = 0
 
 def middle_frame(container):
     global CPM
@@ -70,7 +72,7 @@ def middle_frame(container):
     top_frame.columnconfigure(7, weight=1)
 
     # CPM
-    corrected_cpm = Label(top_frame, text=f"Corrected CPM: {CPM}")  # noqa: F405
+    corrected_cpm = Label(top_frame, text=f"Accuracy: {CPM}%")  # noqa: F405
     corrected_cpm.grid(column=0, row=0)
 
     # WPM
@@ -195,11 +197,11 @@ def middle_frame(container):
         global old_start_index
         global original_start_index
         global CPM
+        global errors
 
-        CPM += 1
-        corrected_cpm.config(text=f"Corrected CPM: {CPM}")
-        
         if event.char != ' ':
+            CPM += 1
+
             if len(current_word_list) > 0:
                 count += 1
                 if event.char == current_word_list[0]: 
@@ -250,6 +252,8 @@ def middle_frame(container):
                         else:
                             print('char not found')
                 else:
+                    errors += 1
+                    print(errors)
                     # color the char character red
                     if word_count == 0:
                         char_index = 1
@@ -288,6 +292,14 @@ def middle_frame(container):
                             current_letters.append(current_word_list.pop(0))
                         else:
                             print('char not found')
+
+            if errors > 0 and CPM >= 1:
+                accuracy = CPM - errors
+                accuracy = accuracy/CPM
+                cpm_score = accuracy * 100.0
+                corrected_cpm.config(text=f"Accuracy: {round(cpm_score)}%")
+            else:
+                corrected_cpm.config(text=f"Accuracy: 100%")
 
         else:
             if len(current_word_list) != 0:
