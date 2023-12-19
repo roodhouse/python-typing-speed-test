@@ -1,23 +1,20 @@
 # see if can reduce the words to words between 5 and 10 characters 
 # make text bigger
 
-import glob
-import random
-from tkinter import *
-from xml.etree.ElementTree import TreeBuilder  # noqa: F403
+from sys import maxsize
+from tkinter import *  # noqa: F403
 from random_word import RandomWords, Wordnik
-import time
 
 window = Tk()  # noqa: F405
 window.title("Typing Speed Test")
 window.geometry("600x525")  # adjust the size here
 
-canvas = Canvas(width=600, height=200, background="#800808")  # noqa: F405\
+canvas = Canvas(width=600, height=200, background="#7393B3")  # noqa: F405\
 canvas.pack()
 
 title = canvas.create_text(
     300,
-    50,
+    75,
     text="Typing Speed Test",
     width=350,
     font=("Arial", 30, "bold"),
@@ -26,27 +23,29 @@ title = canvas.create_text(
 
 question = canvas.create_text(
     300,
+    # 125,
     125,
     text="How fast are your fingers?",
     width=550,
     font=("Arial", 16, "bold"),
-    fill="white",
+    fill="white"
 )
 
 directions = canvas.create_text(
     300,
     155,
-    text="Do the one-minute typing test to find out! Press the space bar after each word. At the end, you'll get your typing speed in CPM and WPM. Good luck!",
+    text="Do the one-minute typing test to find out! Press the space bar after each word. At the end, you'll get your accuracy and WPM. Good luck!",
     width=550,
     font=("Arial", 14),
     fill="white",
+    justify="center"
 )
 
 CPM = 0
 
 wordnik_service = Wordnik()
 
-random_words = wordnik_service.get_random_words()
+random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
 # random_words = ['john', 'jingle', 'jheimer']
 end_index = ''
 start_index = ''
@@ -100,22 +99,41 @@ def middle_frame(container):
         cursor="man",
     ).grid(column=7, row=0)  # noqa: F405
 
-    # countdown(60)
+    def on_scroll(*args):
+        text_box.yview(*args)
 
     # middle frame start here 
     frame = Frame(container)  # noqa: F405
     frame.columnconfigure(0, weight=1)
+    frame.rowconfigure(index=0, weight=1)
+    frame.rowconfigure(index=1, weight=1)
+    frame.rowconfigure(index=2, weight=1)
 
     words_text = " ".join(random_words)
 
+    text_frame = Frame()
+    text_frame.columnconfigure(index=0, weight=1)
+    text_frame.columnconfigure(index=1, weight=1)
+    
+
     text_box = Text(
-        frame, width=60, height=10, wrap=WORD, font=("Arial", 15), padx=20, pady=20
+        text_frame, width=30, height=10, wrap=WORD, font=("Arial", 30), padx=20, pady=20
     )  # noqa: F405
     text_box.insert(END, words_text)  # noqa: F405
     text_box.config(state=DISABLED)  # noqa: F405
-    text_box.pack(fill=X)  # noqa: F405
+    # text_box.pack(fill=X)  # noqa: F405
+    text_box.grid(column=0, row=0)
 
-    bottom_frame = Text(frame, width=60, height=1, wrap=WORD, font=('Arial', 15), padx=20, pady=20)
+    scrollbar = Scrollbar(text_frame, orient=VERTICAL, command=on_scroll)
+    # scrollbar.pack(side='right', fill='y')
+    scrollbar.grid(column=1, row=0)
+    
+    text_box.config(yscrollcommand=scrollbar.set)
+
+    # text_frame.pack()
+
+    # bottom_frame = Text(frame, width=60, height=1, wrap=WORD, font=('Arial', 15), padx=20, pady=20)
+    bottom_frame = Text(frame, width=30, height=1, wrap=WORD, font=('Arial', 30), padx=20, pady=20)
 
     def on_entry(event):
         if bottom_frame.get("1.0", "end-1c") == "type the words here...":
@@ -154,7 +172,7 @@ def middle_frame(container):
                 length = str(len(highlight_word))
                 end_index = "1" + "." + length
                 text_box.tag_add('highlight', start_index, end_index)
-                text_box.tag_config('highlight', background='green')
+                text_box.tag_config('highlight', background='#7393B3')
         else:
             split_start = start_index.split('.')
             split_whole = split_start[0]
@@ -180,7 +198,7 @@ def middle_frame(container):
                 end_index = end_whole + "." + end_dec
                 convert_start_index = str(convert_start_index)
                 text_box.tag_add('highlight', convert_start_index, end_index)
-                text_box.tag_config('highlight', background='green' )
+                text_box.tag_config('highlight', background='#7393B3' )
             else:
                 print('word not found')
     
@@ -231,7 +249,7 @@ def middle_frame(container):
                             found_char_position = char_whole + '.' + str(found_char)
                             next_char_position = found_char_position + '+1c'
                             text_box.tag_add('font', found_char_position, next_char_position)
-                            text_box.tag_config('font', foreground='yellow' )
+                            text_box.tag_config('font', foreground='green' )
                             current_letters.append(current_word_list.pop(0))
                         else:
                             print('char not found')
@@ -256,7 +274,7 @@ def middle_frame(container):
                             found_char_position = char_whole + '.' + start_index_convert_dec_string
                             next_char_position = found_char_position + '+1c'
                             text_box.tag_add('font', start_index, next_char_position)
-                            text_box.tag_config('font', foreground='yellow' )
+                            text_box.tag_config('font', foreground='green' )
                             current_letters.append(current_word_list.pop(0))
                         else:
                             print('char not found')
@@ -327,7 +345,11 @@ def middle_frame(container):
 
     top_frame.grid(row=0, column=0, sticky="ew")
     bottom_frame.insert("1.0", "type the words here...")
-    bottom_frame.pack(fill=X)
+    text_frame.pack()
+    # text_frame.grid(row=1, column=0)
+    # bottom_frame.pack(fill=X)
+    bottom_frame.grid(row=2, column=0)
+    
 
     bottom_frame.bind("<FocusIn>", on_entry)
     bottom_frame.bind("<FocusOut>", on_exit)
