@@ -1,3 +1,7 @@
+# restart button
+# frame to display final score
+# remove caps and odd characters from word list
+
 from tkinter import *  # noqa: F403
 from random_word import RandomWords, Wordnik
 
@@ -101,11 +105,9 @@ def middle_frame(container):
     frame = Frame(container)  # noqa: F405
 
     words_text = " ".join(random_words)
-
-    text_frame = Frame(container)
   
     text_box = Text(
-        frame, width=30, height=4, wrap=WORD, font=("Arial", 30), padx=20, pady=20
+        frame, width=30, height=4, wrap=WORD, font=("Arial", 30), padx=20, pady=20, spacing2=30, background='#323132'
     )  # noqa: F405
     text_box.insert(END, words_text)  # noqa: F405
     text_box.config(state=DISABLED)  # noqa: F405
@@ -150,7 +152,9 @@ def middle_frame(container):
                 length = str(len(highlight_word))
                 end_index = "1" + "." + length
                 text_box.tag_add('highlight', start_index, end_index)
+                text_box.tag_add('highlight', end_index)
                 text_box.tag_config('highlight', background='#7393B3')
+                text_box.see(start_index)
         else:
             split_start = start_index.split('.')
             split_whole = split_start[0]
@@ -177,6 +181,7 @@ def middle_frame(container):
                 convert_start_index = str(convert_start_index)
                 text_box.tag_add('highlight', convert_start_index, end_index)
                 text_box.tag_config('highlight', background='#7393B3' )
+                text_box.see(convert_start_index)
             else:
                 print('word not found')
     
@@ -323,9 +328,6 @@ def middle_frame(container):
 
     top_frame.grid(row=0, column=0, sticky="ew")
     bottom_frame.insert("1.0", "type the words here...")
-    # text_frame.pack()
-    text_frame.grid(row=1, column=0)
-    # bottom_frame.pack(fill=X)
     bottom_frame.grid(row=2, column=0, pady=(6,0))
     
 
