@@ -1,7 +1,3 @@
-# see if can reduce the words to words between 5 and 10 characters 
-# make text bigger
-
-from sys import maxsize
 from tkinter import *  # noqa: F403
 from random_word import RandomWords, Wordnik
 
@@ -46,7 +42,6 @@ CPM = 0
 wordnik_service = Wordnik()
 
 random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
-# random_words = ['john', 'jingle', 'jheimer']
 end_index = ''
 start_index = ''
 current_letters = []
@@ -61,7 +56,7 @@ def middle_frame(container):
     global CPM
     global start
     #top frame start here 
-    top_frame = Frame(container)  # noqa: F405
+    top_frame = Frame(container, pady=10)  # noqa: F405
 
     top_frame.columnconfigure(0, weight=1)
     top_frame.columnconfigure(1, weight=3)
@@ -104,35 +99,18 @@ def middle_frame(container):
 
     # middle frame start here 
     frame = Frame(container)  # noqa: F405
-    frame.columnconfigure(0, weight=1)
-    frame.rowconfigure(index=0, weight=1)
-    frame.rowconfigure(index=1, weight=1)
-    frame.rowconfigure(index=2, weight=1)
 
     words_text = " ".join(random_words)
 
-    text_frame = Frame()
-    text_frame.columnconfigure(index=0, weight=1)
-    text_frame.columnconfigure(index=1, weight=1)
-    
-
+    text_frame = Frame(container)
+  
     text_box = Text(
-        text_frame, width=30, height=10, wrap=WORD, font=("Arial", 30), padx=20, pady=20
+        frame, width=30, height=4, wrap=WORD, font=("Arial", 30), padx=20, pady=20
     )  # noqa: F405
     text_box.insert(END, words_text)  # noqa: F405
     text_box.config(state=DISABLED)  # noqa: F405
-    # text_box.pack(fill=X)  # noqa: F405
     text_box.grid(column=0, row=0)
 
-    scrollbar = Scrollbar(text_frame, orient=VERTICAL, command=on_scroll)
-    # scrollbar.pack(side='right', fill='y')
-    scrollbar.grid(column=1, row=0)
-    
-    text_box.config(yscrollcommand=scrollbar.set)
-
-    # text_frame.pack()
-
-    # bottom_frame = Text(frame, width=60, height=1, wrap=WORD, font=('Arial', 15), padx=20, pady=20)
     bottom_frame = Text(frame, width=30, height=1, wrap=WORD, font=('Arial', 30), padx=20, pady=20)
 
     def on_entry(event):
@@ -345,10 +323,10 @@ def middle_frame(container):
 
     top_frame.grid(row=0, column=0, sticky="ew")
     bottom_frame.insert("1.0", "type the words here...")
-    text_frame.pack()
-    # text_frame.grid(row=1, column=0)
+    # text_frame.pack()
+    text_frame.grid(row=1, column=0)
     # bottom_frame.pack(fill=X)
-    bottom_frame.grid(row=2, column=0)
+    bottom_frame.grid(row=2, column=0, pady=(6,0))
     
 
     bottom_frame.bind("<FocusIn>", on_entry)
