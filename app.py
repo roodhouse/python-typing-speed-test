@@ -89,7 +89,7 @@ def middle_frame(container):
     corrected_cpm.grid(column=0, row=0)
 
     # WPM
-    words_per_min = Label(top_frame, text='WPM: ')  # noqa: F405
+    words_per_min = Label(top_frame, text='WPM: 0')  # noqa: F405
     words_per_min.grid(column=3, row=0)
 
     # countdown timer
@@ -141,7 +141,7 @@ def middle_frame(container):
         CPM = 0
         WPM = 0
         corrected_cpm.config(text=f"Accuracy: {CPM}%")
-        words_per_min.config(text='WPM: ')
+        words_per_min.config(text='WPM: 0')
         final_accuracy = 0
         time_left.config(text="Time Left: 60")
 
