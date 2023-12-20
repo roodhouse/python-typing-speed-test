@@ -1,4 +1,3 @@
-# restart button
 # frame to display final score
 
 from tkinter import *  # noqa: F403
@@ -54,10 +53,8 @@ def get_words():
     word_translate = str.maketrans("", "", string.punctuation)
     words_clean = [word.translate(word_translate) for word in words_lower]
     random_words = words_clean
-    # print(random_words)
 
 get_words()
-print(random_words)
 
 end_index = ''
 start_index = ''
@@ -71,6 +68,7 @@ start = True
 stop_signal = False
 highlight_word = ''
 current_word_list = []
+WPM = 0
 
 def middle_frame(container):
     global CPM
@@ -111,8 +109,7 @@ def middle_frame(container):
     # Restart
 
     def restart_push(event):
-        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal, highlight_word, current_word_list
-        print('yo')
+        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal, highlight_word, current_word_list, CPM, WPM
 
         end_index = ''
         start_index = ''
@@ -125,7 +122,6 @@ def middle_frame(container):
         start = True
         stop_signal = True
         get_words()
-        print(random_words)
         words_text = " ".join(random_words)
         text_box.config(state=NORMAL)
         text_box.get("1.0", END)
@@ -134,12 +130,12 @@ def middle_frame(container):
         highlight_word = ''
         current_word_list = []
         remove_word()
-
-        # reset cpm and wpm
-        # reset entry widget
-        # countdown is not starting...
-
-        countdown(60)
+        window.focus_set()
+        bottom_frame.delete("1.0", "end")
+        CPM = 0
+        WPM = 0
+        corrected_cpm.config(text=f"Accuracy: {CPM}%")
+        words_per_min.config(text='WPM: ')
 
         text_box.config(state=DISABLED)
 
@@ -162,8 +158,10 @@ def middle_frame(container):
     bottom_frame = Text(frame, width=30, height=1, wrap=WORD, font=('Arial', 30), padx=20, pady=20)
 
     def on_entry(event):
+        global stop_signal
         if bottom_frame.get("1.0", "end-1c") == "type the words here...":
             bottom_frame.delete("1.0", "end")
+            stop_signal = False
     
     def on_exit(event):
         if bottom_frame.get("1.0", "end-1c") == "":
@@ -174,17 +172,13 @@ def middle_frame(container):
         global start_index
         global highlight_word
         global current_word_list
-        print(f'the highlight word is before convert: {highlight_word}')
+
         current_word = random_words.pop(0)
-        print(f'the current word is: {current_word}')
-        print(f'the end_index is: {end_index}')
+
         for letter in current_word:
             current_word_list.append(letter)
         
-        print(f'current word list is: {current_word_list}')
         highlight_word = ''.join(current_word_list).lower()
-
-        print(f'the highlight word is after convert: {highlight_word}')
 
         if end_index != '':
             split_end = end_index.split('.')
@@ -196,7 +190,6 @@ def middle_frame(container):
             start_index = split_end
         else:
             start_index = "1.0"
-            print(f'here i am')
 
         if start_index == "1.0": 
             text_content = text_box.get(start_index, "end").lower()
@@ -258,6 +251,7 @@ def middle_frame(container):
         global CPM
         global errors
         global start
+        global WPM
 
         if start:
                 countdown(60)
