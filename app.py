@@ -102,6 +102,7 @@ def middle_frame(container):
            time_left.config(text='Time Left: 60')
        else:
            time_left.config(text=f'Time\'s up!')
+           
 
     time_left = Label(top_frame, text="Time Left: 60")  # noqa: F405
     time_left.grid(column=5, row=0)
@@ -254,7 +255,7 @@ def middle_frame(container):
         global WPM
 
         if start:
-                countdown(60)
+                countdown(5)
                 start = False
 
         if event.char != ' ':
