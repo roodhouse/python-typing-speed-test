@@ -69,6 +69,8 @@ original_start_index = 0
 errors = 0
 start = True
 stop_signal = False
+highlight_word = ''
+current_word_list = []
 
 def middle_frame(container):
     global CPM
@@ -109,7 +111,7 @@ def middle_frame(container):
     # Restart
 
     def restart_push(event):
-        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal
+        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal, highlight_word, current_word_list
         print('yo')
 
         end_index = ''
@@ -129,9 +131,13 @@ def middle_frame(container):
         text_box.get("1.0", END)
         text_box.delete("1.0", END)
         text_box.insert(END, words_text)
+        highlight_word = ''
+        current_word_list = []
+        remove_word()
 
         # reset cpm and wpm
         # reset entry widget
+        # countdown is not starting...
 
         countdown(60)
 
@@ -163,15 +169,22 @@ def middle_frame(container):
         if bottom_frame.get("1.0", "end-1c") == "":
             bottom_frame.insert("1.0", "type the words here...")
     
-    current_word_list = []
-
     def remove_word():
         global end_index
         global start_index
+        global highlight_word
+        global current_word_list
+        print(f'the highlight word is before convert: {highlight_word}')
         current_word = random_words.pop(0)
+        print(f'the current word is: {current_word}')
+        print(f'the end_index is: {end_index}')
         for letter in current_word:
             current_word_list.append(letter)
+        
+        print(f'current word list is: {current_word_list}')
         highlight_word = ''.join(current_word_list).lower()
+
+        print(f'the highlight word is after convert: {highlight_word}')
 
         if end_index != '':
             split_end = end_index.split('.')
@@ -183,6 +196,7 @@ def middle_frame(container):
             start_index = split_end
         else:
             start_index = "1.0"
+            print(f'here i am')
 
         if start_index == "1.0": 
             text_content = text_box.get(start_index, "end").lower()
