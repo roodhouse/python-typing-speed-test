@@ -69,10 +69,12 @@ stop_signal = False
 highlight_word = ''
 current_word_list = []
 WPM = 0
+final_accuracy = 0
 
 def middle_frame(container):
     global CPM
     global start
+    global final_accuracy
     #top frame start here 
     top_frame = Frame(container, pady=10)  # noqa: F405
 
@@ -102,6 +104,11 @@ def middle_frame(container):
            time_left.config(text='Time Left: 60')
        else:
            time_left.config(text=f'Time\'s up!')
+           text_box.config(state=NORMAL)
+           text_box.get("1.0", END)
+           text_box.delete("1.0", END)
+           text_box.insert(END, f'Your accuracy was {final_accuracy}% and you typed {WPM} words per minute.')
+        #    text_box.insert(END, '2nd test')
            
 
     time_left = Label(top_frame, text="Time Left: 60")  # noqa: F405
@@ -110,7 +117,7 @@ def middle_frame(container):
     # Restart
 
     def restart_push(event):
-        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal, highlight_word, current_word_list, CPM, WPM
+        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal, highlight_word, current_word_list, CPM, WPM, final_accuracy
 
         end_index = ''
         start_index = ''
@@ -137,6 +144,8 @@ def middle_frame(container):
         WPM = 0
         corrected_cpm.config(text=f"Accuracy: {CPM}%")
         words_per_min.config(text='WPM: ')
+        final_accuracy = 0
+        time_left.config(text="Time Left: 60")
 
         text_box.config(state=DISABLED)
 
@@ -253,9 +262,10 @@ def middle_frame(container):
         global errors
         global start
         global WPM
+        global final_accuracy
 
         if start:
-                countdown(5)
+                countdown(60)
                 start = False
 
         if event.char != ' ':
@@ -355,6 +365,7 @@ def middle_frame(container):
                 accuracy = CPM - errors
                 accuracy = accuracy/CPM
                 cpm_score = accuracy * 100.0
+                final_accuracy = round(cpm_score)
                 corrected_cpm.config(text=f"Accuracy: {round(cpm_score)}%")
             else:
                 corrected_cpm.config(text="Accuracy: 100%")
