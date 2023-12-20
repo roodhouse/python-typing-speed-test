@@ -45,12 +45,19 @@ CPM = 0
 
 wordnik_service = Wordnik()
 
-random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
-words_lower = [word.lower() for word in random_words]
-word_translate = str.maketrans("", "", string.punctuation)
-words_clean = [word.translate(word_translate) for word in words_lower]
-random_words = words_clean
+random_words = []
 
+def get_words():
+    global random_words
+    random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
+    words_lower = [word.lower() for word in random_words]
+    word_translate = str.maketrans("", "", string.punctuation)
+    words_clean = [word.translate(word_translate) for word in words_lower]
+    random_words = words_clean
+    # print(random_words)
+
+get_words()
+print(random_words)
 
 end_index = ''
 start_index = ''
@@ -61,6 +68,7 @@ old_start_index = 0
 original_start_index = 0
 errors = 0
 start = True
+stop_signal = False
 
 def middle_frame(container):
     global CPM
@@ -86,9 +94,12 @@ def middle_frame(container):
 
     # countdown timer
     def countdown(seconds):
-       if seconds > 0:
+       global stop_signal
+       if seconds > 0 and not stop_signal:
             time_left.config(text=f'Time Left: {seconds}')
             window.after(1000, countdown, seconds - 1)
+       elif stop_signal:
+           time_left.config(text='Time Left: 60')
        else:
            time_left.config(text=f'Time\'s up!')
 
@@ -96,16 +107,39 @@ def middle_frame(container):
     time_left.grid(column=5, row=0)
 
     # Restart
-    Label(  # noqa: F405
-        top_frame,
-        text="Restart",
-        foreground="white",
-        font=("Arial", 12, "underline"),
-        cursor="man",
-    ).grid(column=7, row=0)  # noqa: F405
 
-    def on_scroll(*args):
-        text_box.yview(*args)
+    def restart_push(event):
+        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal
+        print('yo')
+
+        end_index = ''
+        start_index = ''
+        current_letters = []
+        count = 0
+        word_count = 0
+        old_start_index = 0
+        original_start_index = 0
+        errors = 0
+        start = True
+        stop_signal = True
+        get_words()
+        print(random_words)
+        words_text = " ".join(random_words)
+        text_box.config(state=NORMAL)
+        text_box.get("1.0", END)
+        text_box.delete("1.0", END)
+        text_box.insert(END, words_text)
+
+        # reset cpm and wpm
+        # reset entry widget
+
+        countdown(60)
+
+        text_box.config(state=DISABLED)
+
+    restart = Label(top_frame, text="Restart", foreground="white", font=("Arial", 12, "underline"), cursor="man")
+    restart.grid(column=7, row=0)
+    restart.bind("<Button>", restart_push)
 
     # middle frame start here 
     frame = Frame(container)  # noqa: F405
