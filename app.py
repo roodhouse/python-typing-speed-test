@@ -1,4 +1,3 @@
-# restart button
 # frame to display final score
 
 from tkinter import *  # noqa: F403
@@ -45,12 +44,17 @@ CPM = 0
 
 wordnik_service = Wordnik()
 
-random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
-words_lower = [word.lower() for word in random_words]
-word_translate = str.maketrans("", "", string.punctuation)
-words_clean = [word.translate(word_translate) for word in words_lower]
-random_words = words_clean
+random_words = []
 
+def get_words():
+    global random_words
+    random_words = wordnik_service.get_random_words(minLength=5, maxLength=10, limit=500)
+    words_lower = [word.lower() for word in random_words]
+    word_translate = str.maketrans("", "", string.punctuation)
+    words_clean = [word.translate(word_translate) for word in words_lower]
+    random_words = words_clean
+
+get_words()
 
 end_index = ''
 start_index = ''
@@ -61,6 +65,10 @@ old_start_index = 0
 original_start_index = 0
 errors = 0
 start = True
+stop_signal = False
+highlight_word = ''
+current_word_list = []
+WPM = 0
 
 def middle_frame(container):
     global CPM
@@ -86,9 +94,12 @@ def middle_frame(container):
 
     # countdown timer
     def countdown(seconds):
-       if seconds > 0:
+       global stop_signal
+       if seconds > 0 and not stop_signal:
             time_left.config(text=f'Time Left: {seconds}')
             window.after(1000, countdown, seconds - 1)
+       elif stop_signal:
+           time_left.config(text='Time Left: 60')
        else:
            time_left.config(text=f'Time\'s up!')
 
@@ -96,16 +107,41 @@ def middle_frame(container):
     time_left.grid(column=5, row=0)
 
     # Restart
-    Label(  # noqa: F405
-        top_frame,
-        text="Restart",
-        foreground="white",
-        font=("Arial", 12, "underline"),
-        cursor="man",
-    ).grid(column=7, row=0)  # noqa: F405
 
-    def on_scroll(*args):
-        text_box.yview(*args)
+    def restart_push(event):
+        global end_index, start_index, current_letters, count, word_count, old_start_index, original_start_index, errors, start, stop_signal, highlight_word, current_word_list, CPM, WPM
+
+        end_index = ''
+        start_index = ''
+        current_letters = []
+        count = 0
+        word_count = 0
+        old_start_index = 0
+        original_start_index = 0
+        errors = 0
+        start = True
+        stop_signal = True
+        get_words()
+        words_text = " ".join(random_words)
+        text_box.config(state=NORMAL)
+        text_box.get("1.0", END)
+        text_box.delete("1.0", END)
+        text_box.insert(END, words_text)
+        highlight_word = ''
+        current_word_list = []
+        remove_word()
+        window.focus_set()
+        bottom_frame.delete("1.0", "end")
+        CPM = 0
+        WPM = 0
+        corrected_cpm.config(text=f"Accuracy: {CPM}%")
+        words_per_min.config(text='WPM: ')
+
+        text_box.config(state=DISABLED)
+
+    restart = Label(top_frame, text="Restart", foreground="white", font=("Arial", 12, "underline"), cursor="man")
+    restart.grid(column=7, row=0)
+    restart.bind("<Button>", restart_push)
 
     # middle frame start here 
     frame = Frame(container)  # noqa: F405
@@ -122,21 +158,26 @@ def middle_frame(container):
     bottom_frame = Text(frame, width=30, height=1, wrap=WORD, font=('Arial', 30), padx=20, pady=20)
 
     def on_entry(event):
+        global stop_signal
         if bottom_frame.get("1.0", "end-1c") == "type the words here...":
             bottom_frame.delete("1.0", "end")
+            stop_signal = False
     
     def on_exit(event):
         if bottom_frame.get("1.0", "end-1c") == "":
             bottom_frame.insert("1.0", "type the words here...")
     
-    current_word_list = []
-
     def remove_word():
         global end_index
         global start_index
+        global highlight_word
+        global current_word_list
+
         current_word = random_words.pop(0)
+
         for letter in current_word:
             current_word_list.append(letter)
+        
         highlight_word = ''.join(current_word_list).lower()
 
         if end_index != '':
@@ -210,6 +251,7 @@ def middle_frame(container):
         global CPM
         global errors
         global start
+        global WPM
 
         if start:
                 countdown(60)
