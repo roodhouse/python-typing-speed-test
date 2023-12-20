@@ -1,7 +1,5 @@
-# frame to display final score
-
 from tkinter import *  # noqa: F403
-from random_word import RandomWords, Wordnik
+from random_word import Wordnik
 import string
 
 window = Tk()  # noqa: F405
@@ -103,11 +101,11 @@ def middle_frame(container):
        elif stop_signal:
            time_left.config(text='Time Left: 60')
        else:
-           time_left.config(text=f'Time\'s up!')
-           text_box.config(state=NORMAL)
-           text_box.get("1.0", END)
-           text_box.delete("1.0", END)
-           text_box.insert(END, f'Your accuracy was {final_accuracy}% and you typed {WPM} words per minute.')
+           time_left.config(text='Time\'s up!')
+           text_box.config(state=NORMAL)  # noqa: F405
+           text_box.get("1.0", END)  # noqa: F405
+           text_box.delete("1.0", END)  # noqa: F405
+           text_box.insert(END, f'Your accuracy was {final_accuracy}% and you typed {WPM} words per minute.')  # noqa: F405
         #    text_box.insert(END, '2nd test')
            
 
@@ -131,10 +129,10 @@ def middle_frame(container):
         stop_signal = True
         get_words()
         words_text = " ".join(random_words)
-        text_box.config(state=NORMAL)
-        text_box.get("1.0", END)
-        text_box.delete("1.0", END)
-        text_box.insert(END, words_text)
+        text_box.config(state=NORMAL)  # noqa: F405
+        text_box.get("1.0", END)  # noqa: F405
+        text_box.delete("1.0", END)  # noqa: F405
+        text_box.insert(END, words_text)  # noqa: F405
         highlight_word = ''
         current_word_list = []
         remove_word()
@@ -147,9 +145,9 @@ def middle_frame(container):
         final_accuracy = 0
         time_left.config(text="Time Left: 60")
 
-        text_box.config(state=DISABLED)
+        text_box.config(state=DISABLED)  # noqa: F405
 
-    restart = Label(top_frame, text="Restart", foreground="white", font=("Arial", 12, "underline"), cursor="man")
+    restart = Label(top_frame, text="Restart", foreground="white", font=("Arial", 12, "underline"), cursor="man")  # noqa: F405
     restart.grid(column=7, row=0)
     restart.bind("<Button>", restart_push)
 
@@ -158,14 +156,14 @@ def middle_frame(container):
 
     words_text = " ".join(random_words)
   
-    text_box = Text(
-        frame, width=30, height=4, wrap=WORD, font=("Arial", 30), padx=20, pady=20, spacing2=30, background='#323132'
+    text_box = Text(  # noqa: F405
+        frame, width=30, height=4, wrap=WORD, font=("Arial", 30), padx=20, pady=20, spacing2=30, background='#323132'  # noqa: F405
     )  # noqa: F405
     text_box.insert(END, words_text)  # noqa: F405
     text_box.config(state=DISABLED)  # noqa: F405
     text_box.grid(column=0, row=0)
 
-    bottom_frame = Text(frame, width=30, height=1, wrap=WORD, font=('Arial', 30), padx=20, pady=20)
+    bottom_frame = Text(frame, width=30, height=1, wrap=WORD, font=('Arial', 30), padx=20, pady=20)  # noqa: F405
 
     def on_entry(event):
         global stop_signal
