@@ -306,7 +306,7 @@ def middle_frame(container):
 
         if start:
             stop_signal = False
-            countdown(5)
+            countdown(60)
             start = False
 
         if event.char != " ":
