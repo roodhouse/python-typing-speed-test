@@ -162,6 +162,7 @@ def middle_frame(container):
         remove_word()
         window.focus_set()
         bottom_frame.delete("1.0", "end")
+        bottom_frame.insert("1.0", "type the words here...")
         CPM = 0
         WPM = 0
         corrected_cpm.config(text=f"Accuracy: {CPM}%")
@@ -305,7 +306,7 @@ def middle_frame(container):
 
         if start:
             stop_signal = False
-            countdown(60)
+            countdown(5)
             start = False
 
         if event.char != " ":
@@ -437,6 +438,7 @@ def middle_frame(container):
                 corrected_cpm.config(text=f"Accuracy: {round(cpm_score)}%")
             else:
                 corrected_cpm.config(text="Accuracy: 100%")
+                final_accuracy = '100'
 
             WPM = (CPM / 5) / 1
             words_per_min.config(text=f"WPM: {WPM}")
