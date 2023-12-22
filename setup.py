@@ -2,8 +2,10 @@ import sys
 from cx_Freeze import setup, Executable
 
 build_exe_options = {
-    "packages": ["tkinter"],
-    "include_files": [],
+    # "packages": ["tkinter"],
+    "packages": ["tkinter", "random_word"],
+    # "include_files": ["tkinter", "random_word"],
+    "include_files": [("/Applications/XAMPP/xamppfiles/htdocs/python-typing-speed-test/venv/bin/python3.11", "python3.11")],
     "excludes": [],
 }
 
