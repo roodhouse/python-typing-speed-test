@@ -1,7 +1,7 @@
-# 100 Days of Code: The Complete Python Pro Bootcamp for 2023 - Day 86 - Typing Seed Test
+# 100 Days of Code: The Complete Python Pro Bootcamp for 2023 - Day 86 - Typing Speed Test
  - Entertainment web app solution
 
-This is a solution my to the [Typing Seed Test](https://www.udemy.com/course/100-days-of-code/).
+This is a solution my to the [Typing Speed Test](https://www.udemy.com/course/100-days-of-code/).
 
 ## Table of contents
 
